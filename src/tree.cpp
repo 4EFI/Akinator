@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sttring.h>
+#include <string.h>
 
 #include "tree.h"
 #include "my_assert.h"
@@ -213,7 +213,7 @@ Node* TreeSearch( Node* nodeBegin, Elem_t val )
         rightNode = TreeSearch( nodeBegin->right, val );
     }
 
-    if/* */( strcmp( nodeBegin->value, val ) == 0 ) 
+    if/* */( stricmp( nodeBegin->value, val ) == 0 ) 
     {
         return nodeBegin;
     }

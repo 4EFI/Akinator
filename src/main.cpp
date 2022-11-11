@@ -15,6 +15,8 @@ int main()
 
     TreeGraphDump( &akinatorTree );
 
+    
+
     TreeDtor( &akinatorTree );
 }
 

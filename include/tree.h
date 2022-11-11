@@ -40,9 +40,10 @@ int TreeDtor( Tree* tree );
 
 int TreeAddChild( Tree* tree, Node* node, Elem_t val, int side );
 
-FILE* TreeCreateDotDumpFile( Node* node, const char* fileName );
+Node* TreeSearch( Node* nodeBegin, Elem_t val );
 
-int TreeGraphDump( Tree* tree );
+FILE* TreeCreateDotDumpFile( Node* node, const char* fileName );
+int   TreeGraphDump( Tree* tree );
 
 int TreeSaveData( Tree* tree, const char* fileName, const char* fileTypeOpening );
 
