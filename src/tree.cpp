@@ -153,7 +153,8 @@ int TreeAddChild( Tree* tree, Node* node, Elem_t val, int side )
 {
     ASSERT( tree != NULL && node != NULL, 0 );
 
-    Node* newNode = ( Node* )calloc( 1, sizeof( Node ) );
+    Node*     newNode = ( Node* )calloc( 1, sizeof( Node ) );
+    NodeCtor( newNode );
 
     newNode->value = val;
 
