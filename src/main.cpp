@@ -8,16 +8,19 @@
 
 int main()
 {
-    Tree       akinatorTree = { 0 };
+    const char* fileAkinatorName =  "akinator_data.txt"; 
+    
+    Tree akinatorTree = { 0 };
     TreeCtor( &akinatorTree );
 
-    akinatorTree.headNode.value = "Unknown who";
+    LoadAkinatorData( &akinatorTree, fileAkinatorName );
 
     TreeGraphDump( &akinatorTree );
 
-    
+    SaveAkinatorData( &akinatorTree, fileAkinatorName );
 
     TreeDtor( &akinatorTree );
+    return 1;
 }
 
     

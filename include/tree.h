@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-static const Elem_t NODE_POISON = ( Elem_t )0x5E32DEAD;
+static const TreeElem_t NODE_POISON = ( TreeElem_t )0x5E32DEAD;
 
 enum NodeSides
 {
@@ -15,7 +15,7 @@ enum NodeSides
 
 struct Node
 {
-    Elem_t value;
+    TreeElem_t value;
 
     Node* left;
     Node* right;
@@ -23,6 +23,8 @@ struct Node
 
 int NodeCtor( Node* node );
 int NodeDtor( Node* node );
+
+int PrintPreorderNodes( Node* node, FILE* file );
 
 int GraphVizNodes( Node* node, FILE* dotFile, int* nodeNum );
 
@@ -38,14 +40,13 @@ struct Tree
 int TreeCtor( Tree* tree );
 int TreeDtor( Tree* tree );
 
-int TreeAddChild( Tree* tree, Node* node, Elem_t val, int side );
+int TreeSetHead(  Tree* tree, /*       */ TreeElem_t val );
+int TreeAddChild( Tree* tree, Node* node, TreeElem_t val, int side );
 
-Node* TreeSearch( Node* nodeBegin, Elem_t val );
+Node* TreeSearch( Node* nodeBegin, TreeElem_t val );
 
 FILE* TreeCreateDotDumpFile( Node* node, const char* fileName );
 int   TreeGraphDump( Tree* tree );
-
-int TreeSaveData( Tree* tree, const char* fileName, const char* fileTypeOpening );
 
 //-----------------------------------------------------------------------------
 

@@ -7,7 +7,7 @@
 
 #include "tree.h"
 #include "my_assert.h"
-#include "stack"
+#include "stack.h"
 
 #define FREE( ptr ) \
     free( ptr );    \
@@ -46,21 +46,24 @@ int NodeDtor( Node* node )
 
 //-----------------------------------------------------------------------------
 
-FILE* TreeCreateDotDumpFile( Node* node, const char* fileName )
+int PrintPreorderNodes( Node* node, FILE* file ) 
 {
-    ASSERT( node != NULL, NULL );
+    ASSERT( node != NULL && file != NULL, 0 );
 
-    FILE* tempDotFile = fopen( fileName, "w" );
+    fprintf( file, "{ \"%s\" ", node->value );
 
-    fprintf( tempDotFile, "digraph ListDump\n" );
-    fprintf( tempDotFile, "{\n" );
+    if( node->left )  
     {
-        int curNodeNum = 1;
-        GraphVizNodes( node, tempDotFile, &curNodeNum );
+        PrintPreorderNodes( node->left, file );
     }
-    fprintf( tempDotFile, "}\n" );
+    if( node->right ) 
+    {
+        PrintPreorderNodes( node->right, file );
+    }
+    
+    fprintf( file, "}\n" );
 
-    return tempDotFile;
+    return 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -127,29 +130,18 @@ int TreeDtor( Tree* tree )
 
 //-----------------------------------------------------------------------------
 
-int TreeSaveData( Tree* tree, const char* fileName, const char* fileTypeOpening )
-{       
-    ASSERT( tree != NULL && fileName != NULL && fileTypeOpening != NULL, 0 );
-
-    if( tree->isEmpty ) return 0;
-
-
-
-    return 1;
-}
-
-//-----------------------------------------------------------------------------
-
-int TreeLoadData( Tree* tree )
+int TreeSetHead( Tree* tree, TreeElem_t val )
 {
-    // ASSERT(  );
-    
+    ASSERT( tree != NULL, 0 );
+
+    tree->headNode.value = val;
+
     return 1;
 }
 
 //-----------------------------------------------------------------------------
 
-int TreeAddChild( Tree* tree, Node* node, Elem_t val, int side )
+int TreeAddChild( Tree* tree, Node* node, TreeElem_t val, int side )
 {
     ASSERT( tree != NULL && node != NULL, 0 );
 
@@ -168,6 +160,25 @@ int TreeAddChild( Tree* tree, Node* node, Elem_t val, int side )
     }
 
     return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+FILE* TreeCreateDotDumpFile( Node* node, const char* fileName )
+{
+    ASSERT( node != NULL, NULL );
+
+    FILE* tempDotFile = fopen( fileName, "w" );
+
+    fprintf( tempDotFile, "digraph ListDump\n" );
+    fprintf( tempDotFile, "{\n" );
+    {
+        int curNodeNum = 1;
+        GraphVizNodes( node, tempDotFile, &curNodeNum );
+    }
+    fprintf( tempDotFile, "}\n" );
+
+    return tempDotFile;
 }
 
 //-----------------------------------------------------------------------------
@@ -198,7 +209,7 @@ int TreeGraphDump( Tree* tree )
 
 //-----------------------------------------------------------------------------
 
-Node* TreeSearch( Node* nodeBegin, Elem_t val )
+Node* TreeSearch( Node* nodeBegin, TreeElem_t val )
 {
     ASSERT( nodeBegin != NULL, 0 );
 

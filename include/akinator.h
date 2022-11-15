@@ -3,9 +3,12 @@
 
 #include "config.h"
 
+#include "tree.h"
+
 //-----------------------------------------------------------------------------
 
-int PrintNode();
+int SaveAkinatorData( Tree* tree, const char* fileName );
+int LoadAkinatorData( Tree* tree, const char* fileName );
 
 //-----------------------------------------------------------------------------
 
