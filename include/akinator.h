@@ -7,8 +7,8 @@
 
 //-----------------------------------------------------------------------------
 
-int SaveAkinatorData( Tree* tree, const char* fileName );
-int LoadAkinatorData( Tree* tree, const char* fileName );
+int   SaveAkinatorData( Tree* tree, const char* fileName );
+Node* LoadAkinatorData( Node* node, FILE* file );
 
 //-----------------------------------------------------------------------------
 

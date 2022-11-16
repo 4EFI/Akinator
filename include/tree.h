@@ -41,7 +41,7 @@ int TreeCtor( Tree* tree );
 int TreeDtor( Tree* tree );
 
 int TreeSetHead(  Tree* tree, /*       */ TreeElem_t val );
-int TreeAddChild( Tree* tree, Node* node, TreeElem_t val, int side );
+int TreeAddChild( Node* node, TreeElem_t val, int side );
 
 Node* TreeSearch( Node* nodeBegin, TreeElem_t val );
 

@@ -9,13 +9,44 @@
 
 //-----------------------------------------------------------------------------
 
-int LoadAkinatorData( Tree* tree, const char* fileName )
+Node* LoadAkinatorData( Node* node, FILE* file )
 {
-    ASSERT( tree != NULL && fileName != NULL, 0 );
-
+    ASSERT( node != NULL && file != NULL, NULL );
+	
+	char data[ MaxStrLen ] = "";
     
+    char  curSym  = fgetc( file );
+    Node* curNode = NULL; 
 
-    return 1;
+    if( curSym == '{' )
+    {
+        fscanf( file, "\"%[^\"]\"", data );
+
+        //NodeCtor( curNode );
+        //curNode->value = data; 
+    }
+
+
+    curSym = fgetc( file );
+
+    if( curSym == '}' ) return curNode;
+    if( curSym == '{' )
+    {
+        ungetc( curSym, file );
+        TreeAddChild( LoadAkinatorData( node, file ), data, LEFT_SIDE ); 
+    }
+
+
+    curSym = fgetc( file );
+
+    if( curSym == '}' ) return curNode;
+    if( curSym == '{' )
+    {
+        ungetc( curSym, file );
+        TreeAddChild( LoadAkinatorData( node, file ), data, RIGHT_SIDE ); 
+    }
+
+    return curNode;
 }
 
 //-----------------------------------------------------------------------------

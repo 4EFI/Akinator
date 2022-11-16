@@ -8,6 +8,7 @@
 #include "tree.h"
 #include "my_assert.h"
 #include "stack.h"
+#include "LOG.h"
 
 #define FREE( ptr ) \
     free( ptr );    \
@@ -23,7 +24,7 @@ int NodeCtor( Node* node )
 {
     ASSERT( node != NULL, 0 );
 
-    node->value = NODE_POISON;
+    node->value = NULL;
     node->left  = NULL;
     node->right = NULL;
 
@@ -70,8 +71,8 @@ int PrintPreorderNodes( Node* node, FILE* file )
 
 int GraphVizNodes( Node* node, FILE* dotFile, int* nodeNum )
 {
-    if( node == NULL ) return 0;
-
+    ASSERT( dotFile != NULL && nodeNum != NULL, 0 );
+    
     int leftNum  = 0;
     int rightNum = 0;
     
@@ -79,25 +80,25 @@ int GraphVizNodes( Node* node, FILE* dotFile, int* nodeNum )
     {
         leftNum  = GraphVizNodes( node->left,  dotFile, nodeNum );
     }    
-    else if( node->right )
-    {
+    if( node->right )
+    {   
         rightNum = GraphVizNodes( node->right, dotFile, nodeNum );
     }
-
+    
     fprintf( dotFile, "\tnode%d[ shape = record, style = \"filled\", fillcolor = \"lightgreen\", label = \"%s\" ];\n", 
-                       *nodeNum, node->value );
+                       *nodeNum, node->value );                                      
 
-    if( node->left)
+    if( node->left )
     {
-        fprintf( dotFile, "\t\"node%d\" -- \"node%d\"\n", *nodeNum, leftNum );
+        fprintf( dotFile, "\t\"node%d\" -> \"node%d\"\n", *nodeNum, leftNum );
     }
     if( node->right )
     {
-        fprintf( dotFile, "\t\"node%d\" -- \"node%d\"\n", *nodeNum, rightNum );
+        fprintf( dotFile, "\t\"node%d\" -> \"node%d\"\n", *nodeNum, rightNum );
     }
 
     (*nodeNum)++;
-    return (*nodeNum) - 1;
+    return *nodeNum - 1;
 }
 
 //-----------------------------------------------------------------------------
@@ -141,9 +142,9 @@ int TreeSetHead( Tree* tree, TreeElem_t val )
 
 //-----------------------------------------------------------------------------
 
-int TreeAddChild( Tree* tree, Node* node, TreeElem_t val, int side )
+int TreeAddChild( Node* node, TreeElem_t val, int side )
 {
-    ASSERT( tree != NULL && node != NULL, 0 );
+    ASSERT( node != NULL, 0 );
 
     Node*     newNode = ( Node* )calloc( 1, sizeof( Node ) );
     NodeCtor( newNode );
@@ -173,7 +174,7 @@ FILE* TreeCreateDotDumpFile( Node* node, const char* fileName )
     fprintf( tempDotFile, "digraph ListDump\n" );
     fprintf( tempDotFile, "{\n" );
     {
-        int curNodeNum = 1;
+        int curNodeNum = 1;  
         GraphVizNodes( node, tempDotFile, &curNodeNum );
     }
     fprintf( tempDotFile, "}\n" );
