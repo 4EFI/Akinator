@@ -16,17 +16,13 @@ int main()
     FILE* file = fopen( fileAkinatorName, "r" );
     if(  !file  ) return 0;
     
-    //LoadAkinatorData( &akinatorTree.headNode, file );
+    LoadAkinatorData( &akinatorTree.headNode, file );
 
     fclose( file );
 
-    TreeSetHead(  &akinatorTree,          "Main" );
-    TreeAddChild( &akinatorTree.headNode, "Vlados", LEFT_SIDE );
-    TreeAddChild( &akinatorTree.headNode, "Vla", RIGHT_SIDE );
-
     TreeGraphDump( &akinatorTree );
 
-    SaveAkinatorData( &akinatorTree, fileAkinatorName );
+    SaveAkinatorData( &akinatorTree.headNode, fileAkinatorName );
     
     TreeDtor( &akinatorTree );
     return 1;

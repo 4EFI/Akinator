@@ -40,8 +40,8 @@ struct Tree
 int TreeCtor( Tree* tree );
 int TreeDtor( Tree* tree );
 
-int TreeSetHead(  Tree* tree, /*       */ TreeElem_t val );
-int TreeAddChild( Node* node, TreeElem_t val, int side );
+Node* TreeSetNodeValue( Node* node, TreeElem_t val );
+Node* TreeAddChild    ( Node* node, TreeElem_t val, int side );
 
 Node* TreeSearch( Node* nodeBegin, TreeElem_t val );
 

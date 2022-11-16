@@ -62,7 +62,7 @@ int PrintPreorderNodes( Node* node, FILE* file )
         PrintPreorderNodes( node->right, file );
     }
     
-    fprintf( file, "}\n" );
+    fprintf( file, "} " );
 
     return 1;
 }
@@ -131,20 +131,20 @@ int TreeDtor( Tree* tree )
 
 //-----------------------------------------------------------------------------
 
-int TreeSetHead( Tree* tree, TreeElem_t val )
+Node* TreeSetNodeValue( Node* node, TreeElem_t val )
 {
-    ASSERT( tree != NULL, 0 );
+    ASSERT( node != NULL, NULL );
 
-    tree->headNode.value = val;
+    node->value = val;
 
-    return 1;
+    return node;
 }
 
 //-----------------------------------------------------------------------------
 
-int TreeAddChild( Node* node, TreeElem_t val, int side )
+Node* TreeAddChild( Node* node, TreeElem_t val, int side )
 {
-    ASSERT( node != NULL, 0 );
+    ASSERT( node != NULL, NULL );
 
     Node*     newNode = ( Node* )calloc( 1, sizeof( Node ) );
     NodeCtor( newNode );
@@ -160,7 +160,7 @@ int TreeAddChild( Node* node, TreeElem_t val, int side )
         node->right = newNode;
     }
 
-    return 1;
+    return newNode;
 }
 
 //-----------------------------------------------------------------------------
