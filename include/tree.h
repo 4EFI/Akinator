@@ -17,6 +17,8 @@ enum NodeSides
 
 struct Node
 {
+    Node* parent;
+    
     TreeElem_t value;
 
     Node* left;

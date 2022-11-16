@@ -8,10 +8,6 @@
 
 //-----------------------------------------------------------------------------
 
-void ClearBuffer();
-
-//-----------------------------------------------------------------------------
-
 int main()
 {
     const char* fileAkinatorName =  "akinator_data.txt"; 
@@ -42,7 +38,7 @@ int main()
             break;
 
         case DEFINITION_MODE:
-            //DefinitionMode( &akinatorTree );
+            DefinitionMode( &akinatorTree );
             break;
 
         case DIFFERENCIES_MODE:
@@ -58,7 +54,7 @@ int main()
             break;
         
         default:
-            ClearBuffer();
+            fflush( stdin );
             printf( "Invalid input, please try again...\n" );
             break;
         }
@@ -66,19 +62,10 @@ int main()
         if( isExit ) break; 
     }   
 
-    TreeGraphDump( &akinatorTree );
-
     SaveAkinatorData( &akinatorTree.headNode, fileAkinatorName );
     
     TreeDtor( &akinatorTree );
     return 1;
-}
-
-//-----------------------------------------------------------------------------
-
-void ClearBuffer()
-{
-    while( getchar() != '\n' ) {;}
 }
 
 //-----------------------------------------------------------------------------

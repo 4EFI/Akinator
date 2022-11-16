@@ -25,11 +25,14 @@ int PrintAkinatorMenu();
 int GetAkinatorGameMode( int* gameMode );
 
 int CheckUserAnswer();
-int AddCharacter   ( Node* Node );
-int GuessCharacter ( Node* node );
+int AddCharacter   ( Tree* tree, Node* Node );
+int GuessCharacter ( Tree* tree, Node* Node );
 
-int ShowDataMode( Tree* tree );
-int GuessMode   ( Tree* tree );
+int DescribeCharacter( Node* node, const char* character );
+
+int ShowDataMode  ( Tree* tree );
+int DefinitionMode( Tree* tree );
+int GuessMode     ( Tree* tree );
 
 //-----------------------------------------------------------------------------
 

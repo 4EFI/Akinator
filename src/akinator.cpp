@@ -102,27 +102,7 @@ int GetAkinatorGameMode( int* gameMode )
 
 //-----------------------------------------------------------------------------
 
-// Akinator Game Modes
-//-----------------------------------------------------------------------------
-
-int ShowDataMode( Tree* tree )
-{
-    ASSERT( tree != NULL, 0 );
-    
-    TreeGraphDump( tree );
-    
-    char cmd[ MaxStrLen ] = "";
-    sprintf( cmd, "\"C://Program Files/Google/Chrome/Application/chrome\" "
-                    "C:/Users/kvv20/Documents/Akinator/%s", FileTreeDumpName );
-    
-    system( cmd );
-
-    return 1;
-}
-
-//-----------------------------------------------------------------------------
-
-int GuessCharacter( Node* node )
+int GuessCharacter( Tree* tree, Node* node )
 {
     if( !node->left && !node->right )
     {
@@ -134,15 +114,15 @@ int GuessCharacter( Node* node )
         } 
         else
         {
-            AddCharacter( node );
+            AddCharacter( tree, node );
         }
     }
     else
     {
         printf( "%s?\n", node->value );
 
-        if( CheckUserAnswer() ) GuessCharacter( node->left  );
-        else                    GuessCharacter( node->right );
+        if( CheckUserAnswer() ) GuessCharacter( tree, node->left  );
+        else                    GuessCharacter( tree, node->right );
     }
 
     return 1;
@@ -172,7 +152,7 @@ int CheckUserAnswer()
 
 //-----------------------------------------------------------------------------
 
-int AddCharacter( Node* node )
+int AddCharacter( Tree* tree, Node* node )
 {  
     ASSERT( node != NULL, 0 );
 
@@ -184,11 +164,11 @@ int AddCharacter( Node* node )
     char* newCharacter = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( newCharacter );
 
-    if( TreeSearch( node, newCharacter ) )
+    if( TreeSearch( &tree->headNode, newCharacter ) )
     {
         printf( "I already have this character in my database, but with another definition:\n" );
         
-        // Deskribe (node->tree, answer);
+        DescribeCharacter( &tree->headNode, newCharacter );
 
         return 1;
     }
@@ -208,6 +188,37 @@ int AddCharacter( Node* node )
 
 //-----------------------------------------------------------------------------
 
+int DescribeCharacter( Node* node, const char* character )
+{
+    ASSERT( node      != NULL, 0 );
+    ASSERT( character != NULL, 0 );
+
+    Node* foundNode = TreeSearch( node, character );
+
+    if( foundNode )
+    {    
+        Node*  curNode  = foundNode;
+        while( curNode != node )
+        {
+            printf( "%s%s\n", curNode->parent->left == curNode ? "" : "Not ", curNode->parent->value  );
+
+            curNode = curNode->parent;
+        }
+    }
+    else
+    {
+        printf( "I don't have this character in my database ):\n" );
+    }
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+
+// Akinator Game Modes
+//-----------------------------------------------------------------------------
+
 int GuessMode( Tree* tree )
 {
     ASSERT( tree != NULL, 0 );
@@ -215,7 +226,42 @@ int GuessMode( Tree* tree )
     printf( "Think about any character and I will try to guess it\n" );
     printf( "Lets start!\n" );
 
-    GuessCharacter( &tree->headNode );
+    GuessCharacter( tree, &tree->headNode );
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int DefinitionMode( Tree* tree )
+{
+    ASSERT( tree != NULL, 0 );
+
+    fflush( stdin );
+
+    printf( "Enter character name...\n" );
+
+    char* character = ( char* )calloc( MaxStrLen, sizeof( char ) );
+    gets( character );
+
+    DescribeCharacter( &tree->headNode, character );
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int ShowDataMode( Tree* tree )
+{
+    ASSERT( tree != NULL, 0 );
+    
+    TreeGraphDump( tree );
+    
+    char cmd[ MaxStrLen ] = "";
+    sprintf( cmd, "\"C://Program Files/Google/Chrome/Application/chrome\" "
+                    "C:/Users/kvv20/Documents/Akinator/%s", FileTreeDumpName );
+    
+    system( cmd );
 
     return 1;
 }
