@@ -24,7 +24,12 @@ int LoadAkinatorData( Node* node, FILE* file, int side = 0 );
 int PrintAkinatorMenu();
 int GetAkinatorGameMode( int* gameMode );
 
+int CheckUserAnswer();
+int AddCharacter   ( Node* Node );
+int GuessCharacter ( Node* node );
+
 int ShowDataMode( Tree* tree );
+int GuessMode   ( Tree* tree );
 
 //-----------------------------------------------------------------------------
 

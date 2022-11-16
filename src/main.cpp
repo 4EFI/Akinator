@@ -38,15 +38,15 @@ int main()
         switch( gameMode )
         {
         case GUESS_MODE:
-            //GuessMode( &akinatortree );
+            GuessMode( &akinatorTree );
             break;
 
         case DEFINITION_MODE:
-            //DefinitionMode( &akinatortree );
+            //DefinitionMode( &akinatorTree );
             break;
 
         case DIFFERENCIES_MODE:
-            //DifferenciesMode( &akinatortree );
+            //DifferenciesMode( &akinatorTree );
             break;
 
         case SHOWDATA_MODE:

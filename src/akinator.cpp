@@ -121,3 +121,101 @@ int ShowDataMode( Tree* tree )
 }
 
 //-----------------------------------------------------------------------------
+
+int GuessCharacter( Node* node )
+{
+    if( !node->left && !node->right )
+    {
+        printf( "Is it %s?\n", node->value );
+
+        if ( CheckUserAnswer() ) 
+        {
+            printf( "I knew it!\n" );
+        } 
+        else
+        {
+            AddCharacter( node );
+        }
+    }
+    else
+    {
+        printf( "%s?\n", node->value );
+
+        if( CheckUserAnswer() ) GuessCharacter( node->left  );
+        else                    GuessCharacter( node->right );
+    }
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int CheckUserAnswer()
+{
+    char answer[ MaxStrLen ] = "";
+
+    scanf( "%s", answer );
+
+    if/* */( stricmp( answer,  "no" ) == 0)
+    {
+        return 0;
+    }
+    else if( stricmp (answer, "yes" ) == 0)
+    {    
+        return 1;
+    }
+    
+    printf( "Uncorrect answer, please enter yes or no...\n" );
+        
+    return CheckUserAnswer();
+}
+
+//-----------------------------------------------------------------------------
+
+int AddCharacter( Node* node )
+{  
+    ASSERT( node != NULL, 0 );
+
+    printf( "Sorry, I don't know who you are thinking about :(\n" );
+    printf( "Tell me who was your character?\n" );
+
+    char* newCharacter = ( char* )calloc( MaxStrLen, sizeof( char ) );
+    gets( newCharacter );
+
+    if( TreeSearch( node, newCharacter ) )
+    {
+        printf( "I already have this character in my database, but with another definition:\n" );
+        
+        // Deskribe (node->tree, answer);
+
+        return 1;
+    }
+
+    printf( "Tell me whats the difference between %s and %s\n", newCharacter, node->value );
+
+    char* difference = ( char* )calloc( MaxStrLen, sizeof( char ) );
+    gets( difference );
+
+    TreeAddChild( node, newCharacter, LEFT_SIDE  );
+    TreeAddChild( node, node->value,  RIGHT_SIDE );
+
+    node->value = difference;
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int GuessMode( Tree* tree )
+{
+    ASSERT( tree != NULL, 0 );
+
+    printf( "Think about any character and I will try to guess it\n" );
+    printf( "Lets start!\n" );
+
+    GuessCharacter( &tree->headNode );
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
