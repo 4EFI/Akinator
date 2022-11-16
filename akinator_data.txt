@@ -1,1 +1,1 @@
-{ "Main" { "Vlados" } { "Vla" } } 
+{ "Animal" { "Poltorashka" } { "Teaches math" { "Teaches RT" { "Znamenskaya" } { "Redkozubov" } } { "Sing" { "Kizaru" } { "Ded" } } } } 

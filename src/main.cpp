@@ -15,10 +15,13 @@ int main()
 
     FILE* file = fopen( fileAkinatorName, "r" );
     if(  !file  ) return 0;
-    
-    LoadAkinatorData( &akinatorTree.headNode, file );
 
+    LoadAkinatorData( &akinatorTree.headNode, file ); // Load akinator data
     fclose( file );
+
+
+    PrintAkinatorMenu();
+    
 
     TreeGraphDump( &akinatorTree );
 

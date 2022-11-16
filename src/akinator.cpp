@@ -11,7 +11,7 @@
 
 //-----------------------------------------------------------------------------
 
-Node* LoadAkinatorData( Node* node, FILE* file )
+Node* LoadAkinatorData( Node* node, FILE* file, int side )
 {
     ASSERT( node != NULL, NULL );
     ASSERT( file != NULL, NULL );
@@ -34,11 +34,11 @@ Node* LoadAkinatorData( Node* node, FILE* file )
         if( curSym != ' ' ) break; // skip spaces
     }    
 
-    if( curSym == '}' ) return node;
+    if( curSym == '}' && side == LEFT_SIDE ) return node;
     if( curSym == '{' )
     {
         ungetc( curSym, file );
-        LoadAkinatorData( TreeAddChild( node, "", LEFT_SIDE ), file ); 
+        LoadAkinatorData( TreeAddChild( node, "", LEFT_SIDE ), file, LEFT_SIDE ); 
     }
 
 
@@ -48,11 +48,11 @@ Node* LoadAkinatorData( Node* node, FILE* file )
         if( curSym != ' ' ) break; // skip spaces
     }
 
-    if( curSym == '}' ) return node;
+    if( curSym == '}' && side == RIGHT_SIDE ) return node;
     if( curSym == '{' )
     {   
         ungetc( curSym, file );
-        LoadAkinatorData( TreeAddChild( node, "", RIGHT_SIDE ), file );  
+        LoadAkinatorData( TreeAddChild( node, "", RIGHT_SIDE ), file, RIGHT_SIDE );  
     }
 
     return node;
@@ -75,3 +75,15 @@ int SaveAkinatorData( Node* node, const char* fileName )
 
 //-----------------------------------------------------------------------------
 
+void PrintAkinatorMenu()
+{
+    printf("Enter the number of a mode...\n");
+
+    printf("[%d] for guessing the character\n", GUESS_MODE);
+    printf("[%d] for definition character\n",   DEFINITION_MODE);
+    printf("[%d] for differencies mode\n",      DIFFERENCIES_MODE);
+    printf("[%d] for showing the database\n",   SHOWDATA_MODE);
+    printf("[%d] for exiting the game\n",       EXIT);     
+}
+
+//-----------------------------------------------------------------------------
