@@ -176,6 +176,8 @@ int AddCharacter( Node* node )
 {  
     ASSERT( node != NULL, 0 );
 
+    fflush( stdin );
+
     printf( "Sorry, I don't know who you are thinking about :(\n" );
     printf( "Tell me who was your character?\n" );
 
@@ -191,7 +193,7 @@ int AddCharacter( Node* node )
         return 1;
     }
 
-    printf( "Tell me whats the difference between %s and %s\n", newCharacter, node->value );
+    printf( "Tell me how %s is different from the %s\n", newCharacter, node->value );
 
     char* difference = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( difference );
