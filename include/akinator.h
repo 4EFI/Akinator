@@ -18,10 +18,13 @@ enum AkinatorGameModes
 
 //-----------------------------------------------------------------------------
 
-int   SaveAkinatorData( Node* node, const char* fileName );
-Node* LoadAkinatorData( Node* node, FILE* file, int side = 0 );
+int SaveAkinatorData( Node* node, const char* fileName );
+int LoadAkinatorData( Node* node, FILE* file, int side = 0 );
 
-void PrintAkinatorMenu();
+int PrintAkinatorMenu();
+int GetAkinatorGameMode( int* gameMode );
+
+int ShowDataMode( Tree* tree );
 
 //-----------------------------------------------------------------------------
 

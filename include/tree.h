@@ -5,6 +5,8 @@
 
 static const TreeElem_t NODE_POISON = ( TreeElem_t )0x5E32DEAD;
 
+static const char* FileTreeDumpName = "tree_dump.html";
+
 enum NodeSides
 {
     LEFT_SIDE  = -1,

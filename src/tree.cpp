@@ -14,7 +14,6 @@
     free( ptr );    \
     ptr = NULL;
 
-const char* FileTreeDumpName = "tree_dump.html";
 FILE* FileTreeDump = fopen( FileTreeDumpName, "w" );
 
 //  Node functions

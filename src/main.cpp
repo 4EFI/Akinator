@@ -6,6 +6,12 @@
 #include "tree.h"
 #include "akinator.h"
 
+//-----------------------------------------------------------------------------
+
+void ClearBuffer();
+
+//-----------------------------------------------------------------------------
+
 int main()
 {
     const char* fileAkinatorName =  "akinator_data.txt"; 
@@ -19,9 +25,46 @@ int main()
     LoadAkinatorData( &akinatorTree.headNode, file ); // Load akinator data
     fclose( file );
 
+    // Start game
+    while( true )
+    {
+        PrintAkinatorMenu();
+        
+        int gameMode = -1;
+        GetAkinatorGameMode( &gameMode );
 
-    PrintAkinatorMenu();
-    
+        bool isExit = false;
+
+        switch( gameMode )
+        {
+        case GUESS_MODE:
+            //GuessMode( &akinatortree );
+            break;
+
+        case DEFINITION_MODE:
+            //DefinitionMode( &akinatortree );
+            break;
+
+        case DIFFERENCIES_MODE:
+            //DifferenciesMode( &akinatortree );
+            break;
+
+        case SHOWDATA_MODE:
+            ShowDataMode( &akinatorTree );
+            break;
+
+        case EXIT:
+            isExit = true;
+            break;
+        
+        default:
+            ClearBuffer();
+            printf( "Invalid input, please try again...\n" );
+            break;
+        }
+
+        if( isExit ) break; 
+    }   
 
     TreeGraphDump( &akinatorTree );
 
@@ -30,5 +73,15 @@ int main()
     TreeDtor( &akinatorTree );
     return 1;
 }
+
+//-----------------------------------------------------------------------------
+
+void ClearBuffer()
+{
+    while( getchar() != '\n' ) {;}
+}
+
+//-----------------------------------------------------------------------------
+
 
     
