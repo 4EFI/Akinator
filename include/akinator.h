@@ -4,6 +4,7 @@
 #include "config.h"
 
 #include "tree.h"
+#include "stack.h"
 
 //-----------------------------------------------------------------------------
 
@@ -28,11 +29,16 @@ int CheckUserAnswer();
 int AddCharacter   ( Tree* tree, Node* Node );
 int GuessCharacter ( Tree* tree, Node* Node );
 
-int DescribeCharacter( Node* node, const char* character );
+int DescribeCharacter( Node* nodeBegin, Node* nodeForDescription );
 
-int ShowDataMode  ( Tree* tree );
-int DefinitionMode( Tree* tree );
-int GuessMode     ( Tree* tree );
+int PrintDifferencies( Tree* tree, const char* character1, const char* character2 );
+
+int FindPath( Tree* tree, Node* node, Stack* stk );
+
+int GuessMode       ( Tree* tree );
+int DefinitionMode  ( Tree* tree );
+int DifferenciesMode( Tree* tree );
+int ShowDataMode    ( Tree* tree );
 
 //-----------------------------------------------------------------------------
 

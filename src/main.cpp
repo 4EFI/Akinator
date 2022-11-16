@@ -42,7 +42,7 @@ int main()
             break;
 
         case DIFFERENCIES_MODE:
-            //DifferenciesMode( &akinatorTree );
+            DifferenciesMode( &akinatorTree );
             break;
 
         case SHOWDATA_MODE:

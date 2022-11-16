@@ -9,6 +9,7 @@
 #include "tree.h"
 #include "LOG.h"
 #include "my_assert.h"
+#include "stack.h"
 
 //-----------------------------------------------------------------------------
 
@@ -164,11 +165,13 @@ int AddCharacter( Tree* tree, Node* node )
     char* newCharacter = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( newCharacter );
 
-    if( TreeSearch( &tree->headNode, newCharacter ) )
+    Node* foundNode = TreeSearch( &tree->headNode, newCharacter );
+
+    if( foundNode )
     {
         printf( "I already have this character in my database, but with another definition:\n" );
         
-        DescribeCharacter( &tree->headNode, newCharacter );
+        DescribeCharacter( &tree->headNode, foundNode );
 
         return 1;
     }
@@ -188,26 +191,103 @@ int AddCharacter( Tree* tree, Node* node )
 
 //-----------------------------------------------------------------------------
 
-int DescribeCharacter( Node* node, const char* character )
+int DescribeCharacter( Node* nodeBegin, Node* nodeForDescription )
 {
-    ASSERT( node      != NULL, 0 );
-    ASSERT( character != NULL, 0 );
-
-    Node* foundNode = TreeSearch( node, character );
-
-    if( foundNode )
-    {    
-        Node*  curNode  = foundNode;
-        while( curNode != node )
-        {
-            printf( "%s%s\n", curNode->parent->left == curNode ? "" : "Not ", curNode->parent->value  );
-
-            curNode = curNode->parent;
-        }
-    }
-    else
+    ASSERT( nodeBegin          != NULL, 0 );
+    ASSERT( nodeForDescription != NULL, 0 );
+ 
+    Node*  curNode  = nodeForDescription;
+    while( curNode != nodeBegin )
     {
-        printf( "I don't have this character in my database ):\n" );
+        printf( "%s%s\n", curNode->parent->left == curNode ? "" : "Not ", curNode->parent->value  );
+
+        curNode = curNode->parent;
+    }
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int PrintDifferencies( Tree* tree, const char* character1, const char* character2 )
+{
+    ASSERT( tree       != NULL, 0 );
+    ASSERT( character1 != NULL, 0 );
+    ASSERT( character2 != NULL, 0 );
+
+    Node* nodeCharacter1 = TreeSearch( &tree->headNode, character1 );
+    Node* nodeCharacter2 = TreeSearch( &tree->headNode, character2 );
+
+    if( !nodeCharacter1 )
+    {
+        printf( "I don't have %s in my database...\n", character1 );
+        return 1;
+    }
+    if ( !nodeCharacter2 )
+    {
+        printf( "I don't have %s in my database...\n", character2 );
+        return 1;
+    }
+
+    if( nodeCharacter1 == nodeCharacter2 ) 
+    {
+        printf( "It's the same person...\n" );
+        return 1;
+    }
+
+    Stack       stk1 = { 0 };
+    StackCtor( &stk1, 10 );
+    Stack       stk2 = { 0 };
+    StackCtor( &stk2, 10 );
+
+    FindPath( tree, nodeCharacter1, &stk1 );
+    FindPath( tree, nodeCharacter2, &stk2 );
+
+
+    Node* commonNode = NULL;
+
+    printf( "The commons between %s and %s:\n", character1, character2 );
+
+    Node* currNode1 = NULL;
+    Node* currNode2 = NULL;
+
+    while( true )
+    {
+        currNode1 = StackPop( &stk1 );
+        currNode2 = StackPop( &stk2 );
+
+        if( currNode1 != currNode2 ) break;
+
+        printf( "%s\n", currNode1->value );
+    }
+
+    printf( "But %s:\n", character1 );
+    DescribeCharacter( currNode1, nodeCharacter1 );
+
+    printf( "While %s:\n", character2 );
+    DescribeCharacter( currNode2, nodeCharacter2 );
+
+    StackDtor( &stk1 );
+    StackDtor( &stk2 ); 
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int FindPath( Tree* tree, Node* node, Stack* stk )
+{
+    ASSERT( tree != NULL, 0 );
+    ASSERT( stk  != NULL, 0 );
+
+    Node* currNode = node->parent;
+
+    while( true )
+    {
+        StackPush( stk, currNode );
+
+        if( currNode == &tree->headNode ) break;
+
+        currNode = currNode->parent;
     }
 
     return 1;
@@ -244,7 +324,37 @@ int DefinitionMode( Tree* tree )
     char* character = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( character );
 
-    DescribeCharacter( &tree->headNode, character );
+    Node* foundNode = TreeSearch( &tree->headNode, character );
+    if(  !foundNode  ) 
+    {
+        printf( "I don't have this character in my database ):\n" );
+        return 1;
+    }
+
+    DescribeCharacter( &tree->headNode, foundNode );
+
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int DifferenciesMode( Tree* tree )
+{
+    ASSERT( tree != NULL, 0 );
+
+    printf( "Please, enter two characters from my database.\n");
+    printf( "I will tell you their differencies and commons!\n" );
+
+    char* character1 = ( char* )calloc( MaxStrLen, sizeof( char ) );
+    char* character2 = ( char* )calloc( MaxStrLen, sizeof( char ) );
+
+    fflush( stdin );
+    gets( character1 );
+
+    fflush( stdin );
+    gets( character2 );
+
+    PrintDifferencies( tree, character1, character2 );
 
     return 1;
 }

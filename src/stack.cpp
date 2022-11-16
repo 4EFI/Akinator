@@ -42,7 +42,7 @@ const int ResizeDown = -1;
 
 //---------------------------------------------------------------------------
 
-void StackRecalloc (Stack_t* stack, size_t size, uint64_t leftCanary, uint64_t rightCanary);
+void StackRecalloc (Stack* stack, size_t size, uint64_t leftCanary, uint64_t rightCanary);
 
 //---------------------------------------------------------------------------
 
@@ -67,7 +67,7 @@ static const char* ErrorLines[] = {"Data null ptr",
                                    "Left data canary was changed",
                                    "Right data canary was changed",};
 
-int _StackCtor (Stack_t* stack, int dataSize, const char* mainFileName, 
+int _StackCtor (Stack* stack, int dataSize, const char* mainFileName, 
                                               const char* mainFuncName, 
                                               const char* mainStackName)
 {   
@@ -128,7 +128,7 @@ int _StackCtor (Stack_t* stack, int dataSize, const char* mainFileName,
 
 //---------------------------------------------------------------------------
 
-int StackDtor (Stack_t* stack)
+int StackDtor (Stack* stack)
 {
     ASSERT (stack != NULL, 0);
 
@@ -163,12 +163,12 @@ int StackDtor (Stack_t* stack)
 
 //---------------------------------------------------------------------------
 
-uint64_t StackHashProtection (Stack_t* stack)
+uint64_t StackHashProtection (Stack* stack)
 {   
     ASSERT (stack != NULL, 0);
     
     #ifndef NHASH
-        return HashProtection (stack,       sizeof (Stack_t), stack->info.arrHashIgnorePtr, stack->info.numHashIgnore) +
+        return HashProtection (stack,       sizeof (Stack), stack->info.arrHashIgnorePtr, stack->info.numHashIgnore) +
                HashProtection (stack->data, sizeof (Elem_t) * stack->capacity);
     #else
         return 0;
@@ -177,7 +177,7 @@ uint64_t StackHashProtection (Stack_t* stack)
 
 //---------------------------------------------------------------------------
 
-int StackErrHandler (Stack_t* stack)
+int StackErrHandler (Stack* stack)
 {
     ASSERT (stack != NULL, -1);
     
@@ -243,7 +243,7 @@ int StackErrHandler (Stack_t* stack)
 
 //---------------------------------------------------------------------------
 
-int StackErrPrint (Stack_t* stack, int indent)
+int StackErrPrint (Stack* stack, int indent)
 {
     ASSERT (stack != NULL, -1);
 
@@ -265,7 +265,7 @@ int StackErrPrint (Stack_t* stack, int indent)
 
 //---------------------------------------------------------------------------
 
-void _StackDump (Stack_t* stack)
+void _StackDump (Stack* stack)
 {
     StackErrHandler (stack);
 
@@ -339,7 +339,7 @@ void _StackDump (Stack_t* stack)
 
 //---------------------------------------------------------------------------
 
-int StackResize (Stack_t* stack, int numResize, int sideResize)
+int StackResize (Stack* stack, int numResize, int sideResize)
 {
     ASSERT          (stack != NULL, 0); 
     StackErrHandler (stack); 
@@ -376,7 +376,7 @@ int StackResize (Stack_t* stack, int numResize, int sideResize)
 
 //---------------------------------------------------------------------------
 
-void StackRecalloc (Stack_t* stack, size_t size, uint64_t leftCanary, uint64_t rightCanary)
+void StackRecalloc (Stack* stack, size_t size, uint64_t leftCanary, uint64_t rightCanary)
 {
     #ifndef NCANARY
         stack->data = (Elem_t*)CanaryRecalloc (stack->data, size, leftCanary, rightCanary); 
@@ -394,7 +394,7 @@ void StackRecalloc (Stack_t* stack, size_t size, uint64_t leftCanary, uint64_t r
 
 //---------------------------------------------------------------------------
 
-void StackPush (Stack_t* stack, Elem_t value)
+void StackPush (Stack* stack, Elem_t value)
 {
     ASSERT          (stack != NULL); 
     StackErrHandler (stack);
@@ -414,7 +414,7 @@ void StackPush (Stack_t* stack, Elem_t value)
 
 //---------------------------------------------------------------------------
 
-Elem_t StackPop (Stack_t* stack)
+Elem_t StackPop (Stack* stack)
 {
     ASSERT          (stack != NULL, StackDataPoisonValue); 
     StackErrHandler (stack);

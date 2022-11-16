@@ -191,7 +191,7 @@ int TreeGraphDump( Tree* tree )
     ASSERT( tree != NULL, 0 );
 
     fclose( FileTreeDump );
-    FileTreeDump = fopen( FileTreeDumpName, "a+" );
+    FileTreeDump = fopen( FileTreeDumpName, "w" );
 
     const char* tempDotFileName = "tempGraphVizTree.dot"; 
     FILE*       tempDotFile = TreeCreateDotDumpFile( &tree->headNode, tempDotFileName );

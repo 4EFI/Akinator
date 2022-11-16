@@ -5,7 +5,7 @@ typedef const char* TreeElem_t;
 
 struct Node;
 
-typedef Node* Elem_t; // Stack    
+typedef Node* Elem_t; // For Stack    
 
 const int MaxStrLen = 255;
 
