@@ -3,6 +3,8 @@
 
 typedef const char* TreeElem_t;
 
+#define NVOICE
+
 struct Node;
 
 typedef Node* Elem_t; // For Stack    

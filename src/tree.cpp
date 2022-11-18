@@ -86,8 +86,10 @@ int GraphVizNodes( Node* node, FILE* dotFile, int* nodeNum )
         rightNum = GraphVizNodes( node->right, dotFile, nodeNum );
     }
     
-    fprintf( dotFile, "\tnode%d[ shape = record, style = \"filled\", fillcolor = \"lightgreen\", label = \"%s\" ];\n", 
-                       *nodeNum, node->value );                                      
+    fprintf( dotFile, "\tnode%d[ shape = record, style = \"filled\", fillcolor = \"%s\", label = \"%s\" ];\n", 
+                       *nodeNum, 
+                        node->left == NULL &&  node->right == NULL ? "lightgrey" : "lightgreen",
+                        node->value );                                      
 
     if( node->left )
     {

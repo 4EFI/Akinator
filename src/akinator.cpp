@@ -249,14 +249,30 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
     SayWords( "They both are:\n" );
 
+    bool isStk1Empty = false;
+    bool isStk2Empty = false;
+
     while( true )
     {
+        if( stk1.size == 0 ) { isStk1Empty = true; break; }
+        if( stk2.size == 0 ) { isStk2Empty = true; break; }
+
+        LOG( "stk1.size = %d; stk2.size = %d", stk1.size, stk2.size );
+        
         currNode1 = StackPop( &stk1 );
         currNode2 = StackPop( &stk2 );
 
         if( currNode1 != currNode2 || currNode1->side != currNode2->side ) break;
 
         SayWords( "%s%s\n", currNode1->side == LEFT_SIDE ? "" : "Not ", currNode1->value );
+    }
+
+
+    while( true )
+    {
+        if( stk1.size == 0 ) { isStk1Empty = true; break; }
+
+
     }
 
     SayWords( "But %s:\n", character1 );
@@ -305,10 +321,13 @@ void SayWords( char* temp, ... )
     vsprintf( message, temp, params );
       printf( "%s", message );
 
+
+#ifndef NVOICE
     char cmd[MaxStrLen] = "";
     sprintf( cmd, ".\\eSpeak\\command_line\\espeak.exe \"%s\"", message );
 
     system( cmd );
+#endif
 
     va_end( params );
 }
