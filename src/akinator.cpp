@@ -254,32 +254,33 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
     while( true )
     {
-        if( stk1.size == 0 ) { isStk1Empty = true; break; }
-        if( stk2.size == 0 ) { isStk2Empty = true; break; }
-
-        LOG( "stk1.size = %d; stk2.size = %d", stk1.size, stk2.size );
+        if( stk1.size == 1 ) { isStk1Empty = true; break; }
+        if( stk2.size == 1 ) { isStk2Empty = true; break; }
         
         currNode1 = StackPop( &stk1 );
         currNode2 = StackPop( &stk2 );
 
-        if( currNode1 != currNode2 || currNode1->side != currNode2->side ) break;
+        Node* child1Node = StackPop( &stk1 ); 
+        Node* child2Node = StackPop( &stk2 );
+        StackPush( &stk1, child1Node );
+        StackPush( &stk2, child2Node );
+
+        if( !( currNode1 == currNode2 && child1Node->side == child2Node->side ) ) break;
 
         SayWords( "%s%s\n", currNode1->side == LEFT_SIDE ? "" : "Not ", currNode1->value );
     }
 
-
-    while( true )
+    if( !isStk1Empty )
     {
-        if( stk1.size == 0 ) { isStk1Empty = true; break; }
-
-
+        SayWords( "But %s:\n", character1 );
+        DescribeCharacter( currNode1, nodeCharacter1 );
     }
 
-    SayWords( "But %s:\n", character1 );
-    DescribeCharacter( currNode1, nodeCharacter1 );
-
-    SayWords( "While %s:\n", character2 );
-    DescribeCharacter( currNode2, nodeCharacter2 );
+    if( !isStk2Empty )
+    {
+        SayWords( "While %s:\n", character2 );
+        DescribeCharacter( currNode2, nodeCharacter2 );
+    }
 
     StackDtor( &stk1 );
     StackDtor( &stk2 ); 
@@ -293,7 +294,7 @@ int CreatePath( Tree* tree, Node* node, Stack* stk )
     ASSERT( tree != NULL, 0 );
     ASSERT( stk  != NULL, 0 );
 
-    Node* currNode = node->parent;
+    Node* currNode = node;
 
     while( true )
     {

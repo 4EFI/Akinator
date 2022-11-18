@@ -3,7 +3,7 @@
 
 typedef const char* TreeElem_t;
 
-#define NVOICE
+// #define NVOICE
 
 struct Node;
 
