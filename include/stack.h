@@ -1,6 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include "config.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
@@ -19,6 +21,8 @@ extern int         CurLine;
 
 extern const Elem_t StackDataPoisonValue;
 
+extern FILE* StackFileOut;
+
 //---------------------------------------------------------------------------
 
 extern const int ResizeUp;
@@ -29,23 +33,23 @@ extern const int ResizeDown;
 
 // No hash protection
 #ifndef NHASH
-    #define ON_HASH_PROTECTION(...)  __VA_ARGS__  
+    #define ON_HASH_PROTECTION(...)   __VA_ARGS__  
 #else
     #define ON_HASH_PROTECTION(...) 
 #endif
 
 // No canary protection
 #ifndef NCANARY
-    #define ON_CANARY_PROTECTION(...) __VA_ARGS__  
+    #define ON_CANARY_PROTECTION(...)  __VA_ARGS__  
 #else
     #define ON_CANARY_PROTECTION(...) 
 #endif
 
 // No dump
-#ifndef NDUMP 
-    #define ON_DUMP(...) __VA_ARGS__
+#ifdef STACK_DUMP 
+    #define ON_STACK_DUMP(...)  __VA_ARGS__
 #else
-    #define ON_DUMP(...)
+    #define ON_STACK_DUMP(...)
 #endif
 
 //---------------------------------------------------------------------------
@@ -100,12 +104,11 @@ struct Stack
 int  _StackCtor (Stack* stack, int dataSize, const char* mainFileName, 
                                                const char* mainFuncName, 
                                                const char* mainStackName);
-
 int   StackDtor (Stack* stack);
-
 void _StackDump (Stack* stack);
 
 uint64_t StackHashProtection (Stack* stack);
+uint64_t StackIsValid        (Stack* stack); 
 
 int    StackErrHandler (Stack* stack);
 int    StackErrPrint   (Stack* stack, int indent = 0);
@@ -121,8 +124,6 @@ int PrintSyms (char sym, int num, FILE* file);
 
 //---------------------------------------------------------------------------
 
-void* Recalloc (void* arr, size_t size);
-
 size_t NumBytesHashIgnore (void* arrToComp, void* arr, HashIgnore* arrHashIgnorePtr, size_t numHashIgnore);
 
 uint64_t HashProtection (void*       arr, 
@@ -130,23 +131,21 @@ uint64_t HashProtection (void*       arr,
                          HashIgnore* arrHashIgnore = NULL,
                          size_t      numHashIgnore = 0);
 
-int   CanaryDataSet  (void* data, size_t size, uint64_t leftCanary, uint64_t rightCanary);
-void* CanaryRecalloc (void* data, size_t size, uint64_t leftCanary, uint64_t rightCanary);
+int    CanaryDataSet  (void* data, size_t size, uint64_t leftCanary, uint64_t rightCanary);
+void*  CanaryRecalloc (void* data, size_t size, uint64_t leftCanary, uint64_t rightCanary);
+void*  Recalloc       (void* data, size_t size, int      curSize = 0);
+size_t MallocSize     (void* data);
 
-int FillArray (void* arr, size_t num, size_t size, void* value, size_t sizeVal);
+bool CompareDoubles (double a, double b, double accuracy = 1e-6);
 
 //---------------------------------------------------------------------------
 
 #define StackCtor(stack, dataSize) { _StackCtor (stack, dataSize, __FILE__, __PRETTY_FUNCTION__, #stack); }
 
-#ifndef NDUMP
-    #define StackDump(stack) { CurFileName = __FILE__;            \
-                               CurFuncName = __PRETTY_FUNCTION__; \
-                               CurLine     = __LINE__;            \
-                               _StackDump (stack); }
-#else 
-    #define StackDump(...) ;
-#endif
+#define StackDump(stack) { CurFileName = __FILE__;            \
+                           CurFuncName = __PRETTY_FUNCTION__; \
+                           CurLine     = __LINE__;            \
+                           _StackDump (stack); }
 
 //---------------------------------------------------------------------------
 

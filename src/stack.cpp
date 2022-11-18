@@ -1,14 +1,9 @@
 
-//#define NDUMP
-//#define NHASH
-#define NCANARY
-
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <malloc.h>
+#include <math.h>
 
 #include "stack.h"
 #include "my_assert.h"
@@ -20,7 +15,7 @@ FILE* StackFileOut = NULL;
 
 //---------------------------------------------------------------------------
 
-const Elem_t   StackDataPoisonValue  = ( Elem_t )0x5EEDEAD;
+const Elem_t   StackDataPoisonValue  = (Elem_t)0x5EEDEAD;
 
 const uint64_t StackLeftCanaryValue  = 0xBAADF00D32DEAD32;
 const uint64_t StackRightCanaryValue = 0xD0E0D76BB013927C; 
@@ -65,7 +60,7 @@ static const char* ErrorLines[] = {"Data null ptr",
                                    "Right canary was changed",
                                    "Hash was changed", 
                                    "Left data canary was changed",
-                                   "Right data canary was changed",};
+                                   "Right data canary was changed"};
 
 int _StackCtor (Stack* stack, int dataSize, const char* mainFileName, 
                                               const char* mainFuncName, 
@@ -121,7 +116,7 @@ int _StackCtor (Stack* stack, int dataSize, const char* mainFileName,
 
     ON_HASH_PROTECTION ( stack->info.hashValue = StackHashProtection (stack); )
 
-    StackDump (stack);
+    ON_STACK_DUMP ( StackDump (stack); )
 
     return 1;
 }
@@ -177,11 +172,18 @@ uint64_t StackHashProtection (Stack* stack)
 
 //---------------------------------------------------------------------------
 
+uint64_t StackIsValid (Stack* stack)
+{
+    return stack->info.errStatus;
+}
+
+//---------------------------------------------------------------------------
+
 int StackErrHandler (Stack* stack)
 {
     ASSERT (stack != NULL, -1);
     
-    stack->info.errStatus = 0;    
+    //stack->info.errStatus = 0;    
     
     if (!stack->data) 
     {       
@@ -195,7 +197,7 @@ int StackErrHandler (Stack* stack)
         stack->info.errStatus |= StackErrors::INVALID_SIZE;
     }
 
-    if (stack->capacity < 0)
+    if (stack->capacity <= 0)
     {
         stack->info.errStatus |= StackErrors::INVALID_CAPACITY;
     }
@@ -298,10 +300,10 @@ void _StackDump (Stack* stack)
 
     fputs ("{\n", StackFileOut);
     {
-        ON_HASH_PROTECTION ( fprintf (StackFileOut, "%*shashValue = %lu;\n",   TabSize, "", stack->info.hashValue); )
+        ON_HASH_PROTECTION ( fprintf (StackFileOut, "%*shashValue = %llu;\n",   TabSize, "", stack->info.hashValue); )
 
-        fprintf (StackFileOut, "%*ssize      = %lu;\n",   TabSize, "", stack->size);
-        fprintf (StackFileOut, "%*scapacity  = %lu;\n\n", TabSize, "", stack->capacity);
+        fprintf (StackFileOut, "%*ssize      = %u;\n",   TabSize, "", stack->size);
+        fprintf (StackFileOut, "%*scapacity  = %u;\n\n", TabSize, "", stack->capacity);
 
         fprintf (StackFileOut, "%*sdata[%p]\n", TabSize, "", stack->data);
 
@@ -311,20 +313,20 @@ void _StackDump (Stack* stack)
             {
                 if (stack->info.errStatus & StackErrors::NULL_DATA_PTR) break;
                 
-                bool isEmpty = (i >= stack->size || stack->data[i] == StackDataPoisonValue);
+                bool isEmpty = (i >= stack->size);
             
-                fprintf (StackFileOut, "%*s%s[%lu] = ", 
+                fprintf (StackFileOut, "%*s%s[%u] = ", 
                                         TabSize * 2, "",  
                                         isEmpty ? " " : "*", i);
 
                 // Print value                        
-                if(stack->data[i] == StackDataPoisonValue) 
+                if( stack->data[i] == StackDataPoisonValue ) 
                 {
                     fprintf (StackFileOut, "%s\n", "NAN (POISON)");
                 }
                 else     
                 {   
-                    fprintf (StackFileOut, "%d\n",  stack->data[i]);
+                    fprintf (StackFileOut, "%g\n", stack->data[i] );
                 }
             }
         }
@@ -344,6 +346,8 @@ int StackResize (Stack* stack, int numResize, int sideResize)
     ASSERT          (stack != NULL, 0); 
     StackErrHandler (stack); 
 
+    ON_STACK_DUMP ( StackDump (stack); )
+
     switch (sideResize)
     {
     case ResizeNum:
@@ -362,14 +366,15 @@ int StackResize (Stack* stack, int numResize, int sideResize)
         return -1;
         break;
     }
+
+    numResize = (numResize > 0 ? numResize : 1);
      
     StackRecalloc (stack, numResize * sizeof (Elem_t), DataLeftCanaryValue, DataRightCanaryValue);
 
     stack->capacity = numResize;
     
     ON_HASH_PROTECTION ( stack->info.hashValue = StackHashProtection (stack); )
-
-    StackDump (stack);
+    ON_STACK_DUMP      ( StackDump (stack); )
 
     return stack->capacity;
 }
@@ -384,12 +389,23 @@ void StackRecalloc (Stack* stack, size_t size, uint64_t leftCanary, uint64_t rig
         stack->data = (Elem_t*)Recalloc       (stack->data, size);
     #endif
 
-    if (stack->data != NULL) stack->capacity = size_t(size / sizeof (Elem_t));
+    size_t newStackCapacity = size_t(size / sizeof (Elem_t));
+    
+    if (stack->data != NULL) 
+    {
+        // Fill data with poison (increase data)
+        #ifndef N_STACK_DUMP
+            if (stack->capacity < newStackCapacity)
+            {
+                for (size_t i = stack->capacity; i < newStackCapacity; i++)
+                {
+                    stack->data[i] = StackDataPoisonValue;
+                }
+            }
+        #endif
 
-    // Fill data with poison (increase data)
-    #ifndef NDUMP
-
-    #endif
+        stack->capacity = newStackCapacity;
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -398,6 +414,8 @@ void StackPush (Stack* stack, Elem_t value)
 {
     ASSERT          (stack != NULL); 
     StackErrHandler (stack);
+
+    ON_STACK_DUMP ( StackDump (stack); )
 
     if (!stack->info.isStackValid) return;
 
@@ -409,7 +427,7 @@ void StackPush (Stack* stack, Elem_t value)
 
     ON_HASH_PROTECTION ( stack->info.hashValue = StackHashProtection (stack); )
     
-    StackDump (stack);
+    ON_STACK_DUMP ( StackDump (stack); )
 }
 
 //---------------------------------------------------------------------------
@@ -418,28 +436,30 @@ Elem_t StackPop (Stack* stack)
 {
     ASSERT          (stack != NULL, StackDataPoisonValue); 
     StackErrHandler (stack);
+    
+    ON_STACK_DUMP ( StackDump (stack); )
 
-    if (!stack->info.isStackValid) return 0;
+    if (!stack->info.isStackValid) return 0; 
 
     if (stack->size > 0) 
     {
-        stack->size--;   
-
-        if (stack->size <= size_t(stack->capacity / (2*stack->info.stepResize)))   
+        if (stack->size - 1 <= size_t(stack->capacity / (2*stack->info.stepResize)))   
         {
             StackResize (stack, 0, ResizeDown);
         }  
 
+        stack->size--;   
+
         ON_HASH_PROTECTION ( stack->info.hashValue = StackHashProtection (stack); )
         
-        StackDump (stack);
+        ON_STACK_DUMP ( StackDump (stack); )
 
         return stack->data[stack->size];
     }
 
     ON_HASH_PROTECTION ( stack->info.hashValue = StackHashProtection (stack); )
 
-    StackDump (stack);
+    ON_STACK_DUMP ( StackDump (stack); )
     
     return StackDataPoisonValue;
 }
@@ -467,7 +487,7 @@ size_t NumBytesHashIgnore (void* arrToComp, void* arr, HashIgnore* arrHashIgnore
     // Check Hash Ignored
     for (size_t i = 0; i < numHashIgnore; i++)
     {
-        if (arrToComp == (void*)(arr + arrHashIgnorePtr[i].pos))
+        if (arrToComp == (void*)(int64_t(arr) + arrHashIgnorePtr[i].pos))
         {
             return arrHashIgnorePtr[i].size;  
         }
@@ -531,8 +551,8 @@ void* CanaryRecalloc (void* data, size_t size, uint64_t leftCanary, uint64_t rig
     { 
        data = (void*)(int64_t(data) - sizeof (uint64_t));
     } 
-    
-    data = Recalloc (data, size + 2 * sizeof (uint64_t));
+
+    data = Recalloc (data, size + 2 * sizeof (uint64_t), MallocSize (data) - sizeof (uint64_t));
 
     data = (void*)(int64_t(data) + sizeof (uint64_t));
 
@@ -544,48 +564,47 @@ void* CanaryRecalloc (void* data, size_t size, uint64_t leftCanary, uint64_t rig
 
 //---------------------------------------------------------------------------
 
-void* Recalloc (void* arr, size_t size)
+void* Recalloc (void* data, size_t size, int curSize)
 {   
-    size_t curNum = 0;
-    
-    #ifdef linux
-        curNum = malloc_usable_size (arr);
-    #else
-        curNum = _msize (arr);
-    #endif
+    if (curSize == 0) curSize = MallocSize (data);
+    if (curSize <  0) curSize = 0;
 
-    //LOG ("%u", curNum);
+    if (size_t(curSize) == size) return data;
 
-    if (curNum == size) return arr;
+    data = (void*)realloc (data, size);
 
-    arr = (void*)realloc (arr, size);
-
-    if (curNum < size)
+    if (size_t(curSize) < size)
     {
-        for (int i = curNum; i < size; i++)
-        {
-            ((char*)arr)[i] = 0;
-        }
+        memset ((char*)data + curSize, 0, size - curSize);
     }
 
-    return arr;
+    return data;
 }
 
 //---------------------------------------------------------------------------
 
-int FillArray (void* arr, size_t num, size_t size, void* value, size_t sizeVal)
+size_t MallocSize (void* data)
 {
-    /*
-    ASSERT (arr   != NULL, 0);
-    ASSERT (value != NULL, 0);
+    size_t curNum = 0;
     
-    for (size_t i = 0; i < num; i++)
-    {
-        memcpy (arr + i * size, value, sizeVal);
-    }
-    */
+    #ifdef linux
+        curNum = malloc_usable_size (data);
+    #else
+        curNum = _msize (data);
+    #endif
 
-    return 1;
+    if (data == NULL) curNum = 0;
+
+    return curNum;
+}
+
+//---------------------------------------------------------------------------
+
+bool CompareDoubles (double a, double b, double accuracy)
+{
+    if (fabs (a - b) < accuracy) return 1; 
+
+    return 0;
 }
 
 //---------------------------------------------------------------------------

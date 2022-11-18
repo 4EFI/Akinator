@@ -6,6 +6,8 @@
 #include "tree.h"
 #include "stack.h"
 
+#include  <stdarg.h>
+
 //-----------------------------------------------------------------------------
 
 enum AkinatorGameModes
@@ -33,7 +35,9 @@ int DescribeCharacter( Node* nodeBegin, Node* nodeForDescription );
 
 int PrintDifferencies( Tree* tree, const char* character1, const char* character2 );
 
-int FindPath( Tree* tree, Node* node, Stack* stk );
+int CreatePath( Tree* tree, Node* node, Stack* stk );
+
+void SayWords (char* temp, ...);
 
 int GuessMode       ( Tree* tree );
 int DefinitionMode  ( Tree* tree );

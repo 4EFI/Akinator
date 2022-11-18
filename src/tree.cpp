@@ -152,6 +152,7 @@ Node* TreeAddChild( Node* node, TreeElem_t val, int side )
 
     newNode->value  = val;
     newNode->parent = node;
+    newNode->side   = side;
 
     if/* */( side == NodeSides::LEFT_SIDE )
     {

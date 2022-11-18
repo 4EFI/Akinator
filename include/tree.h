@@ -18,6 +18,8 @@ enum NodeSides
 struct Node
 {
     Node* parent;
+
+    int side;
     
     TreeElem_t value;
 

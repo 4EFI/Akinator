@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
+#include "windows.h"
 
 #include "akinator.h"
 #include "tree.h"
@@ -79,7 +79,7 @@ int SaveAkinatorData( Node* node, const char* fileName )
 
 int PrintAkinatorMenu()
 {
-    printf("Enter the number of mode...\n");
+    SayWords("Enter the number of mode...\n");
 
     printf("[%d] for guessing the character\n", GUESS_MODE);
     printf("[%d] for definition character\n",   DEFINITION_MODE);
@@ -107,11 +107,11 @@ int GuessCharacter( Tree* tree, Node* node )
 {
     if( !node->left && !node->right )
     {
-        printf( "Is it %s?\n", node->value );
+        SayWords( "Is it %s?\n", node->value );
 
         if ( CheckUserAnswer() ) 
         {
-            printf( "I knew it!\n" );
+            SayWords( "I knew it!\n" );
         } 
         else
         {
@@ -120,7 +120,7 @@ int GuessCharacter( Tree* tree, Node* node )
     }
     else
     {
-        printf( "%s?\n", node->value );
+        SayWords( "%s?\n", node->value );
 
         if( CheckUserAnswer() ) GuessCharacter( tree, node->left  );
         else                    GuessCharacter( tree, node->right );
@@ -159,8 +159,8 @@ int AddCharacter( Tree* tree, Node* node )
 
     fflush( stdin );
 
-    printf( "Sorry, I don't know who you are thinking about :(\n" );
-    printf( "Tell me who was your character?\n" );
+    SayWords( "Sorry, I don't know who you are thinking about :(\n" );
+    SayWords( "Tell me who was your character?\n" );
 
     char* newCharacter = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( newCharacter );
@@ -169,14 +169,14 @@ int AddCharacter( Tree* tree, Node* node )
 
     if( foundNode )
     {
-        printf( "I already have this character in my database, but with another definition:\n" );
+        SayWords( "I already have this character in my database, but with another definition:\n" );
         
         DescribeCharacter( &tree->headNode, foundNode );
 
         return 1;
     }
 
-    printf( "Tell me how %s is different from the %s\n", newCharacter, node->value );
+    SayWords( "Tell me how %s is different from the %s\n", newCharacter, node->value );
 
     char* difference = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( difference );
@@ -199,7 +199,7 @@ int DescribeCharacter( Node* nodeBegin, Node* nodeForDescription )
     Node*  curNode  = nodeForDescription;
     while( curNode != nodeBegin )
     {
-        printf( "%s%s\n", curNode->parent->left == curNode ? "" : "Not ", curNode->parent->value  );
+        SayWords( "%s%s\n", curNode->side == LEFT_SIDE ? "" : "Not ", curNode->parent->value  );
 
         curNode = curNode->parent;
     }
@@ -220,18 +220,18 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
     if( !nodeCharacter1 )
     {
-        printf( "I don't have %s in my database...\n", character1 );
+        SayWords( "I don't have %s in my database...\n", character1 );
         return 1;
     }
     if ( !nodeCharacter2 )
     {
-        printf( "I don't have %s in my database...\n", character2 );
+        SayWords( "I don't have %s in my database...\n", character2 );
         return 1;
     }
 
     if( nodeCharacter1 == nodeCharacter2 ) 
     {
-        printf( "It's the same person...\n" );
+        SayWords( "It's the same person...\n" );
         return 1;
     }
 
@@ -240,31 +240,29 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
     Stack       stk2 = { 0 };
     StackCtor( &stk2, 10 );
 
-    FindPath( tree, nodeCharacter1, &stk1 );
-    FindPath( tree, nodeCharacter2, &stk2 );
+    CreatePath( tree, nodeCharacter1, &stk1 );
+    CreatePath( tree, nodeCharacter2, &stk2 );
 
-
-    Node* commonNode = NULL;
-
-    printf( "The commons between %s and %s:\n", character1, character2 );
 
     Node* currNode1 = NULL;
     Node* currNode2 = NULL;
+
+    SayWords( "They both are:\n" );
 
     while( true )
     {
         currNode1 = StackPop( &stk1 );
         currNode2 = StackPop( &stk2 );
 
-        if( currNode1 != currNode2 ) break;
+        if( currNode1 != currNode2 || currNode1->side != currNode2->side ) break;
 
-        printf( "%s\n", currNode1->value );
+        SayWords( "%s%s\n", currNode1->side == LEFT_SIDE ? "" : "Not ", currNode1->value );
     }
 
-    printf( "But %s:\n", character1 );
+    SayWords( "But %s:\n", character1 );
     DescribeCharacter( currNode1, nodeCharacter1 );
 
-    printf( "While %s:\n", character2 );
+    SayWords( "While %s:\n", character2 );
     DescribeCharacter( currNode2, nodeCharacter2 );
 
     StackDtor( &stk1 );
@@ -274,7 +272,7 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
 //-----------------------------------------------------------------------------
 
-int FindPath( Tree* tree, Node* node, Stack* stk )
+int CreatePath( Tree* tree, Node* node, Stack* stk )
 {
     ASSERT( tree != NULL, 0 );
     ASSERT( stk  != NULL, 0 );
@@ -295,6 +293,25 @@ int FindPath( Tree* tree, Node* node, Stack* stk )
 
 //-----------------------------------------------------------------------------
 
+void SayWords( char* temp, ... )
+{
+    ASSERT( temp != NULL );
+    
+    va_list   params = {0};
+    va_start( params, temp );
+
+    char message[MaxStrLen] = "";
+
+    vsprintf( message, temp, params );
+      printf( "%s", message );
+
+    char cmd[MaxStrLen] = "";
+    sprintf( cmd, ".\\eSpeak\\command_line\\espeak.exe \"%s\"", message );
+
+    system( cmd );
+
+    va_end( params );
+}
 
 // Akinator Game Modes
 //-----------------------------------------------------------------------------
@@ -303,8 +320,8 @@ int GuessMode( Tree* tree )
 {
     ASSERT( tree != NULL, 0 );
 
-    printf( "Think about any character and I will try to guess it\n" );
-    printf( "Lets start!\n" );
+    SayWords( "Think about any character and I will try to guess it\n" );
+    SayWords( "Lets start!\n" );
 
     GuessCharacter( tree, &tree->headNode );
 
@@ -319,7 +336,7 @@ int DefinitionMode( Tree* tree )
 
     fflush( stdin );
 
-    printf( "Enter character name...\n" );
+    SayWords( "Enter character name...\n" );
 
     char* character = ( char* )calloc( MaxStrLen, sizeof( char ) );
     gets( character );
@@ -327,7 +344,7 @@ int DefinitionMode( Tree* tree )
     Node* foundNode = TreeSearch( &tree->headNode, character );
     if(  !foundNode  ) 
     {
-        printf( "I don't have this character in my database ):\n" );
+        SayWords( "I don't have this character in my database ):\n" );
         return 1;
     }
 
@@ -342,8 +359,8 @@ int DifferenciesMode( Tree* tree )
 {
     ASSERT( tree != NULL, 0 );
 
-    printf( "Please, enter two characters from my database.\n");
-    printf( "I will tell you their differencies and commons!\n" );
+    SayWords( "Please, enter two characters from my database.\n");
+    SayWords( "I will tell you their differencies and commons!\n" );
 
     char* character1 = ( char* )calloc( MaxStrLen, sizeof( char ) );
     char* character2 = ( char* )calloc( MaxStrLen, sizeof( char ) );

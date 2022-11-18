@@ -51,6 +51,7 @@ int main()
 
         case EXIT:
             isExit = true;
+            SayWords( "Bye!\n" );
             break;
         
         default:

@@ -1,0 +1,130 @@
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Users\kvv20\Documents\Akinator\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0042D4BE в функции DescribeCharacter() в файле C:/Users/kvv20/Documents/Akinator/src/akinator.cpp на строке 202. Попытка прочесть данные по адресу 0x00000008 в модуле C:\Users\kvv20\Documents\Akinator\main.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 171, Date: 2022-07-23 02:08:28 +0400], Instance: 0x0050931C (32-bit), Flags: Cmdre0, Thread: 0x4234 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0042D4BE in C:\Users\kvv20\Documents\Akinator\main.exe: DescribeCharacter() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (202):
+
+    200:     while( curNode != nodeBegin )
+    201:     {
+=>  202:         printf( "%s%s\n", curNode->side == LEFT_SIDE ? "" : "Not ", curNode->parent->value  );
+    203: 
+    204:         curNode = curNode->parent;
+
+# 1 0x0042D7D2 in C:\Users\kvv20\Documents\Akinator\main.exe: PrintDifferencies() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (265):
+
+    263: 
+    264:     printf( "But %s:\n", character1 );
+=>  265:     DescribeCharacter( currNode1, nodeCharacter1 );
+    266: 
+    267:     printf( "While %s:\n", character2 );
+
+# 2 0x0042DB0E in C:\Users\kvv20\Documents\Akinator\main.exe: DifferenciesMode() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (381):
+
+    379:     gets( character2 );
+    380: 
+=>  381:     PrintDifferencies( tree, character1, character2 );
+    382: 
+    383:     return 1;
+
+# 3 0x004014C0 in C:\Users\kvv20\Documents\Akinator\main.exe: main() at C:/Users/kvv20/Documents/Akinator/src/main.cpp (45):
+
+     43: 
+     44:         case DIFFERENCIES_MODE:
+=>   45:             DifferenciesMode( &akinatorTree );
+     46:             break;
+     47: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 171, Date: 2022-07-23 02:08:28 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	./include/TXLib.h
+Compiled:	Nov 17 2022 13:32:07, GNU g++ 4.8.1, std=201103L, MinGW Runtime 3.20, 32-bit, DEBUG
+Started:	Nov 17 2022 13:35:00
+
+Run file:	C:\Users\kvv20\Documents\Akinator\main.exe
+Directory:	C:\Users\kvv20\Documents\Akinator
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Users\kvv20\Documents\Akinator\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0042D4BE в функции DescribeCharacter() в файле C:/Users/kvv20/Documents/Akinator/src/akinator.cpp на строке 202. Попытка прочесть данные по адресу 0x00000008 в модуле C:\Users\kvv20\Documents\Akinator\main.exe. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 171, Date: 2022-07-23 02:08:28 +0400], Instance: 0x0050931C (32-bit), Flags: Cmdre0, Thread: 0x4234 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0042D4BE in C:\Users\kvv20\Documents\Akinator\main.exe: DescribeCharacter() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (202):
+
+    200:     while( curNode != nodeBegin )
+    201:     {
+=>  202:         printf( "%s%s\n", curNode->side == LEFT_SIDE ? "" : "Not ", curNode->parent->value  );
+    203: 
+    204:         curNode = curNode->parent;
+
+# 1 0x0042D7D2 in C:\Users\kvv20\Documents\Akinator\main.exe: PrintDifferencies() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (265):
+
+    263: 
+    264:     printf( "But %s:\n", character1 );
+=>  265:     DescribeCharacter( currNode1, nodeCharacter1 );
+    266: 
+    267:     printf( "While %s:\n", character2 );
+
+# 2 0x0042DB0E in C:\Users\kvv20\Documents\Akinator\main.exe: DifferenciesMode() at C:/Users/kvv20/Documents/Akinator/src/akinator.cpp (381):
+
+    379:     gets( character2 );
+    380: 
+=>  381:     PrintDifferencies( tree, character1, character2 );
+    382: 
+    383:     return 1;
+
+# 3 0x004014C0 in C:\Users\kvv20\Documents\Akinator\main.exe: main() at C:/Users/kvv20/Documents/Akinator/src/main.cpp (45):
+
+     43: 
+     44:         case DIFFERENCIES_MODE:
+=>   45:             DifferenciesMode( &akinatorTree );
+     46:             break;
+     47: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 171, Date: 2022-07-23 02:08:28 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	./include/TXLib.h
+Compiled:	Nov 17 2022 13:32:07, GNU g++ 4.8.1, std=201103L, MinGW Runtime 3.20, 32-bit, DEBUG
+Started:	Nov 17 2022 13:34:59
+
+Run file:	C:\Users\kvv20\Documents\Akinator\main.exe
+Directory:	C:\Users\kvv20\Documents\Akinator
+
+--------------------------------------------------
