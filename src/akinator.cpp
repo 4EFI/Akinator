@@ -247,10 +247,10 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
     Node* currNode1 = NULL;
     Node* currNode2 = NULL;
 
-    SayWords( "They both are:\n" );
-
     bool isStk1Empty = false;
     bool isStk2Empty = false;
+
+    bool isDifferent = true;
 
     while( true )
     {
@@ -267,12 +267,19 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
         if( !( currNode1 == currNode2 && child1Node->side == child2Node->side ) ) break;
 
-        SayWords( "%s%s\n", currNode1->side == LEFT_SIDE ? "" : "Not ", currNode1->value );
+        if( isDifferent )
+        {
+            SayWords( "They both are:\n" );
+            isDifferent = false;
+        }   
+        
+        DescribeCharacter( currNode1, child1Node );
     }
 
     if( !isStk1Empty )
     {
-        SayWords( "But %s:\n", character1 );
+        if( isDifferent ) SayWords( "But %s:\n", character1 );
+
         DescribeCharacter( currNode1, nodeCharacter1 );
     }
 
