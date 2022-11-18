@@ -36,13 +36,16 @@ int LoadAkinatorData( Node* node, FILE* file, int side )
         if( curSym != ' ' ) break; // skip spaces
     }    
 
-    if( curSym == '}' && side == LEFT_SIDE ) return 1;
     if( curSym == '{' )
     {
         ungetc( curSym, file );
         LoadAkinatorData( TreeAddChild( node, "", LEFT_SIDE ), file, LEFT_SIDE ); 
     }
 
+    if( curSym == '}' && side == LEFT_SIDE ) 
+    {
+        return 1;
+    }
 
     // Adding right child
     while( curSym = fgetc( file ) ) 
@@ -50,11 +53,15 @@ int LoadAkinatorData( Node* node, FILE* file, int side )
         if( curSym != ' ' ) break; // skip spaces
     }
 
-    if( curSym == '}' && side == RIGHT_SIDE ) return 1;
     if( curSym == '{' )
     {   
         ungetc( curSym, file );
         LoadAkinatorData( TreeAddChild( node, "", RIGHT_SIDE ), file, RIGHT_SIDE );  
+    }
+
+    if( curSym == '}' && side == RIGHT_SIDE ) 
+    {
+        return 1;
     }
 
     return 1;

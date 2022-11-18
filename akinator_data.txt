@@ -1,1 +1,1 @@
-{ "Animal" { "Poltorashka" } { "Teaches math" { "Teaches RT" { "Znamenskaya" } { "Redkozubov" } } { "Sing" { "Less popular" { "Vlasenko" } { "Kizaru" } } { "Ded" } } } } 
+{ "Animal" { "More dumb than Poltorashka" { "Vlados" } { "Poltorashka" } } { "Teaches math" { "Teaches RT" { "Znamenskaya" } { "Redkozubov" } } { "Sing" { "Less popular than Kizaru" { "Vlasenko" } { "Kizaru" } } { "Ded" } } } } 
