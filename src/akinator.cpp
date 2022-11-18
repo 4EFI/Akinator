@@ -278,7 +278,9 @@ int PrintDifferencies( Tree* tree, const char* character1, const char* character
 
     if( !isStk1Empty )
     {
-        if( isDifferent ) SayWords( "But %s:\n", character1 );
+        if( !isDifferent ) SayWords( "But \n" );
+
+        SayWords( "%s:", character1 );
 
         DescribeCharacter( currNode1, nodeCharacter1 );
     }
